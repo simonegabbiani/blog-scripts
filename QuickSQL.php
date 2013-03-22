@@ -1,6 +1,6 @@
 <?php
 //QuickSQL.php
-//portable easy SQL library (BETA)
+//portable SQL library for simple/common functions (BETA)
 //(missing: error management + several bug fixes)
 
 //namespace \Database
