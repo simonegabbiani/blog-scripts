@@ -1,9 +1,7 @@
 <?php
 //QuickSQL.php
-//portable SQL library for simple/common functions (BETA)
-//(missing: error management + perform() + several bug fixes + common functions)
-//(c) Simone Gabbiani - Release under GNU General Public License 2.0
-//simonegabbiani.blogspot.it/2013/03/un-oggetto-php-per-laccesso-ai-database.html
+//example of SQL library for my blog
+//http://simonegabbiani.blogspot.it/2013/03/pdo-usare-i-database-con-php.html
 
 //namespace \Database
 
