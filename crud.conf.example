@@ -1,0 +1,80 @@
+# crud.conf example
+# see http://simonegabbiani.blogspot.it/2013/03/crud-on-demand.html
+
+--------------------------------------------------------
+# Utenti
+
+u admin  			{"password":"xxxxxxxx"}
+u test				{"password":"xxxxxxxx"}
+
+--------------------------------------------------------
+# Profili
+
+p Aruba				{"host":"62.xxx.xxx.xxx", "db":"Sqlxxxxxxx_1", "user":"Sqlxxxxxxx", "pass":"xxxxxxx", "on-sql-error":"warning"}
+p 192.168.1.2		{"host":"localhost", "db":"Sqlxxxxxxxx", "user":"Sqlxxxxxxx", "pass":"xxxxxxxx", "on-sql-error":"die"}
+
+
+--------------------------------------------------------
+# Tipi personalizzati
+
+t radio_yesno		radio {"default":"0", "list":{"1":"SI", "0":"NO"}}
+t radio_fiera		radio {"default":"n", "list":{"n":"NEWS","f":"FIERA"}}
+t select_subcat_id	select {"title":"Sotto categoria","foreign-key":{"table":"categorie_sub","key":"id","caption":"label"}, "list":{"~query":"SELECT c.id, c.label /* concat(cm.label, ' / ', c.label) */ as caption FROM categorie_sub c LEFT JOIN categorie_main cm ON cm.id = c.main_id ORDER BY caption", "~filter":"SELECT DISTINCT q.cat_id, c.label /* concat(cm.label, ' / ', c.label) */ as caption FROM articoli q LEFT JOIN categorie_sub as c ON c.id = q.cat_id LEFT JOIN categorie_main cm ON cm.id = c.main_id ORDER BY caption"}}
+t select_maincat_id select {"title":"Sezione principale","foreign-key":{"table":"categorie_main","key":"id","caption":"label"}, "list":{"~query":"SELECT id, label FROM categorie_main ORDER BY label", "~filter":"SELECT DISTINCT q.cat_id, c.label /* concat(cm.label, ' / ', c.label) */ as label FROM articoli q LEFT JOIN categorie_sub as c ON c.id = q.cat_id LEFT JOIN categorie_main cm ON cm.id = c.main_id ORDER BY c.label"}}
+t immagine			image {"title":"Immagine", "size:full":"*x200", "size:thumb":"*x60", "dir":"../Public"}
+
+
+---------------------------------------------------------
+# Fields
+
+f articoli id			auto_increment
+f *articoli image_url	immagine
+f *articoli label		text {"len":"200", "title":"Nome"}
+f articoli cat_id		select_subcat_id
+f articoli desc			textarea {"len":"4000", "title":"Descrizione"}
+f articoli mostra_in_anteprima radio_yesno {"title":"Anteprima in categoria","default":"0"}
+# f articoli novita		radio_yesno {"title":"Novità","default":"0"}
+f articoli date			tstamp {"title":"Data"}
+
+f categorie_main id				auto_increment
+f *categorie_main label			text {"title":"Nome", "len":"2000"}
+# f categorie_main image_url	immagine {"title":"Immagine principale"}
+f categorie_main cat_order		text {"title":"Ordine x Homepage"}
+
+f categorie_sub id 				auto_increment
+f *categorie_sub main_id 		select_maincat_id
+f *categorie_sub label 			text {"title":"Nome"}
+f *categorie_sub image_url 		immagine
+f categorie_sub ordine			text {"len":"3", "title":"Ordine"}
+f categorie_sub description		textarea {"len":"4000", "title":"Descrizione"}
+
+f categorie_immagini id 		auto_increment
+f *categorie_immagini cat_id	select_subcat_id
+f *categorie_immagini image_url immagine
+
+f blog id			auto_increment 
+f blog tipo			radio_fiera {"title":"Tipo"}
+f *blog title		text {"len":"200","title":"Titolo"}
+f blog image_url	immagine
+f *blog content		textarea {"len":"4000","css":"width:400px; height:300px; padding:5px;","title":"Testo"}
+f blog date			tstamp {"title":"Data inserimento"}
+f blog mostra_homepage radio_yesno {"title":"Mostra in Homepage"}
+f blog bozza 		radio_yesno {"title":"Nascondi (Bozza)"}
+
+----------------------------------------------------------
+# Configurazioni/Personalizzazioni tabella
+
+c articoli {"title":"Articoli"}
+c blog {"title":"News/Fiere"}
+c categorie_main {"title":"Sezioni"}
+c categorie_immagini {"title":"Immagini sotto categorie","desc":"Sono immagini aggiuntive di anteprima di categoria che prescindono ciò che è presente in catalogo."}
+c categorie_sub {"title":"Sotto categorie"}
+
+
+------------------------------------------------------------
+# Voci aggiuntive menù
+
+v help.html {"title":"Aiuto"}
+
+--------------------------------------------------------------
+#end-of-file
