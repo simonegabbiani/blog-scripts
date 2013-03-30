@@ -1,4 +1,5 @@
-// jQuery "noSpam" plug-in - Simone Gabbiani, 2013
+
+// jQuery noSpam plug-in - Simone Gabbiani, 2013
 // also contains 'attrReplace' and 'textReplace' "plugins
 // see my blog: simonegabbiani.blogspot.com
 
@@ -6,45 +7,49 @@
     //replace text 'find' with 'replacement' from any child node of current jquery selection
     //it doesn't search on subnodes, so you have to specify with in jquery selector
     $.fn.textReplace = function(find, replacement) {
+        if (typeof find != 'object')
+            find = [find];
         return this.each(function() {
-            var buff = '';
             for (var n=0; n<this.childNodes.length; n++) {
-                if (this.childNodes[n].nodeType == 3 || this.childNodes.nodeType == 4)
-                    this.childNodes[n].nodeValue = this.childNodes[n].nodeValue.replace(find, replacement);
+                if (this.childNodes[n].nodeType == 3 || this.childNodes.nodeType == 4) {
+                    for (var i in find) {
+                        this.childNodes[n].nodeValue = this.childNodes[n].nodeValue.replace(find[i], replacement);
+                    }
+                }
             }
         });
     };
     //replace text 'find' with 'replacement' from any attribute of current jquery selection
     $.fn.attrReplace = function(find, replacement) {
+        if (typeof find != 'object')
+            find = [find];
         return this.each(function() {
-            var buff = '';
             for (var n=0; n<this.attributes.length; n++) {
-                this.attributes[n].value = this.attributes[n].value.replace(find, replacement);
+                for (var i in find)
+                    this.attributes[n].value = this.attributes[n].value.replace(find[i], replacement);
             }
         });
     };
     //plug-in noSpam
     $.fn.noSpam = function() {
-    return this.each(function() {
+        return this.each(function() {
         if (this.tagName.toLowerCase() == 'a' && this.href && this.href.length > 1) {
             var u = document.location.href.lastIndexOf('/') + 1;
             var crypt = this.href;
             if (crypt.indexOf(document.location.href.substr(0, u)) == 0) crypt = crypt.substr(u);
             mail = noSpamDecrypt(crypt);
             this.href = "mailto:" + mail;
-            $(this).find("*").add(':parent').textReplace(crypt, mail).attrReplace(crypt, mail);
+            if (this.childNodes.length == 0)
+                this.innerHTML = mail;
+            else
+                $(this).find("*").add(':parent').textReplace([crypt, '%email'], mail).attrReplace([crypt, '%email'], mail);
         }
     });
 }})(jQuery);
 
-//THE FUNCTION base64_decode IS COPIED FROM phpjs.org
-//YOU CAN OVERWRITE YOUR "SECRETS" OVERWRITING THE
-//GLOBAL FUNCTION noSpamDecrypt()
-
 //this is the only global variabile we claim
 var noSpamDecrypt = function(text) {
-
-    //from phpjs.org
+//copied from phpjs.org
     return (function /*base64_decode*/ (data) {
     // http://kevin.vanzonneveld.net
     // +   original by: Tyler Akins (http://rumkin.com)
