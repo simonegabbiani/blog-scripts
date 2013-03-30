@@ -1,5 +1,4 @@
-
-// jQuery noSpam plug-in - Simone Gabbiani, 2013
+// jQuery "noSpam" plug-in - Simone Gabbiani, 2013
 // also contains 'attrReplace' and 'textReplace' "plugins
 // see my blog: simonegabbiani.blogspot.com
 
