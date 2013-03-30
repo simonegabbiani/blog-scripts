@@ -72,7 +72,7 @@ class SQL_MYSQL_Result extends SQL_Result {
 }
 
 
-//mysql_xxxxx functions (PHP < 5)
+//mysql_xxxxx functions (MySQL < 5)
 $GLOBALS['SQL_VENDOR_CLASSES']['mysql-old'] = 'SQL_MYSQL_OLD';
 class SQL_MYSQL_OLD extends SQL {
     private $conn;
